@@ -1,0 +1,598 @@
+/* ============================================================
+   style.css — Portfolio Chatbot
+   Written in plain CSS; no preprocessor needed.
+   All colors live in :root (and [data-theme="dark"]) so you
+   can change the whole palette by editing a few lines.
+   ============================================================ */
+
+/* ── 1. CSS Custom Properties (design tokens) ─────────────── */
+:root {
+  /* Palette — light mode */
+  --color-bg:          #f7f5f2;   /* warm off-white background */
+  --color-surface:     #ffffff;   /* card / composer surface */
+  --color-border:      #e4e0da;   /* subtle dividers */
+  --color-text:        #1a1816;   /* near-black body text */
+  --color-text-muted:  #706860;   /* secondary / meta text */
+  --color-accent:      #c0511e;   /* ONE accent: buttons, links, focus */
+  --color-accent-hover:#a03f14;   /* accent on hover */
+  --color-user-bubble: #1a1816;   /* user message bubble background */
+  --color-user-text:   #f7f5f2;   /* user message text */
+  --color-error-bg:    #fff4f0;   /* inline error message background */
+  --color-error-text:  #9b2a0a;   /* inline error message text */
+  --color-error-border:#f5c8b8;   /* inline error border */
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+               'Segoe UI', Roboto, sans-serif;
+  --text-base: 1rem;              /* 16px — prevents iOS input zoom */
+  --leading:   1.6;
+
+  /* Layout */
+  --max-width:       720px;
+  --header-height:   60px;
+  --composer-height: auto;        /* grows with textarea */
+  --gap-sm:          0.5rem;
+  --gap-md:          1rem;
+  --gap-lg:          1.75rem;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-bubble: 16px;
+}
+
+/* ── Dark mode via prefers-color-scheme ───────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:          #121210;
+    --color-surface:     #1e1c1a;
+    --color-border:      #2e2c2a;
+    --color-text:        #edeae6;
+    --color-text-muted:  #9a9490;
+    --color-accent:      #e8734a;
+    --color-accent-hover:#f28a60;
+    --color-user-bubble: #2e2c2a;
+    --color-user-text:   #edeae6;
+    --color-error-bg:    #2a1612;
+    --color-error-text:  #f4a080;
+    --color-error-border:#5a2a1a;
+  }
+}
+
+/* ── 2. Reset & Base ──────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  /* 100dvh: dynamic viewport height — accounts for mobile browser chrome.
+     100vh fallback for older browsers that don't support dvh. */
+  height: 100vh;
+  height: 100dvh;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  /* Full height layout: header + scrollable main + fixed composer */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  /* safe-area padding for iPhone notch / home bar */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Screen-reader-only utility — visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── 3. Header ────────────────────────────────────────────── */
+.site-header {
+  flex-shrink: 0;
+  height: var(--header-height);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  /* safe-area on the top for iPhone notch */
+  padding-top: env(safe-area-inset-top);
+}
+
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 var(--gap-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-md);
+}
+
+.header-identity {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.header-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.header-tagline {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.header-links {
+  display: flex;
+  gap: var(--gap-md);
+  flex-shrink: 0;
+}
+
+.header-links a {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.header-links a:hover {
+  color: var(--color-accent);
+}
+
+.header-links a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── 4. Main / Chat Column ───────────────────────────────── */
+.chat-main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  /* Scroll the message list independently of the fixed composer */
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* Inner width constraint */
+.message-list,
+.welcome-panel {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--gap-lg) var(--gap-md);
+}
+
+/* ── 5. Welcome Panel ────────────────────────────────────── */
+.welcome-panel {
+  /* vertically center in the available viewport space */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  padding-top: clamp(2rem, 8vh, 5rem);
+}
+
+.welcome-heading {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.welcome-body {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  max-width: 56ch;
+}
+
+.suggestions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-sm);
+}
+
+/* On wider screens show 2 columns */
+@media (min-width: 500px) {
+  .suggestions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap-sm);
+  }
+}
+
+.suggestion-btn {
+  width: 100%;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.875rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  cursor: pointer;
+  /* minimum touch target */
+  min-height: 44px;
+  transition: border-color var(--transition-fast),
+              background-color var(--transition-fast);
+}
+
+.suggestion-btn:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-bg);
+}
+
+.suggestion-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.welcome-panel.hidden {
+  display: none;
+}
+
+/* ── 6. Message List & Bubbles ───────────────────────────── */
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/*
+  Each .message-row is a flex container.
+  User messages are pushed to the right (flex-end).
+  Assistant messages are on the left (flex-start).
+*/
+.message-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  /* Entry animation */
+  animation: msg-in var(--transition-fast) ease both;
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-row { animation: none; }
+}
+
+/* User row: right-aligned */
+.message-row.user {
+  align-items: flex-end;
+}
+
+/* Assistant row: left-aligned */
+.message-row.assistant {
+  align-items: flex-start;
+}
+
+/* Small label above the bubble */
+.message-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+  /* Invisible but announced to screen readers */
+}
+
+/* ── User bubble ── */
+.message-row.user .message-bubble {
+  background-color: var(--color-user-bubble);
+  color: var(--color-user-text);
+  border-radius: var(--radius-bubble) var(--radius-bubble) var(--radius-sm) var(--radius-bubble);
+  padding: 0.65rem 1rem;
+  max-width: min(80%, 540px);
+  word-break: break-word;
+  white-space: pre-wrap;       /* preserve line breaks */
+}
+
+/* ── Assistant message (no loud bubble) ── */
+.message-row.assistant .message-bubble {
+  background: transparent;
+  color: var(--color-text);
+  padding: 0;
+  max-width: min(90%, 600px);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Formatting inside assistant messages */
+.message-bubble p   { margin-bottom: 0.5em; }
+.message-bubble p:last-child { margin-bottom: 0; }
+.message-bubble ul  { padding-left: 1.25rem; margin-bottom: 0.5em; }
+.message-bubble li  { margin-bottom: 0.2em; }
+.message-bubble a   {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.message-bubble a:hover { color: var(--color-accent-hover); }
+.message-bubble strong { font-weight: 600; }
+
+/* ── Error message ── */
+.message-row.error .message-bubble {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1rem;
+  max-width: min(90%, 600px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: var(--gap-sm);
+}
+
+.btn-retry {
+  background: none;
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--color-error-text);
+  cursor: pointer;
+  min-height: 36px;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-retry:hover {
+  background-color: var(--color-error-border);
+}
+
+.btn-retry:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Typing indicator (animated dots) ── */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.5rem 0;
+  height: 1.75rem;
+}
+
+.typing-indicator span {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-text-muted);
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40%            { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-indicator span { animation: none; opacity: 0.6; }
+}
+
+/* ── 7. Composer ─────────────────────────────────────────── */
+.composer-wrapper {
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  /* safe-area padding for iPhone home bar */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.offline-banner {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  font-size: 0.8125rem;
+  text-align: center;
+  padding: 0.4rem var(--gap-md);
+  border-bottom: 1px solid var(--color-error-border);
+}
+
+.composer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--gap-sm) var(--gap-md);
+}
+
+.composer-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gap-sm);
+}
+
+/* Wrapper handles the textarea + char counter stacking */
+.textarea-wrapper {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.message-input {
+  width: 100%;
+  /* 16px minimum to prevent iOS auto-zoom on focus */
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  line-height: var(--leading);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.875rem;
+  resize: none;
+  /*
+    Auto-grow: JS sets --input-height via style.setProperty().
+    CSS custom properties set on an element via style.setProperty() are
+    NOT blocked by Content-Security-Policy 'unsafe-inline' restrictions —
+    they're treated as data, not executable style rules.
+    height: var() reads that value; min/max clamp the range.
+  */
+  height: var(--input-height, 44px);
+  min-height: 44px;    /* comfortable touch target */
+  max-height: 8.5rem;  /* ~5 lines of text */
+  overflow-y: auto;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.message-input::placeholder { color: var(--color-text-muted); }
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+/* Character counter */
+.char-count {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 0.5rem;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.char-count.visible {
+  opacity: 1;
+}
+
+.char-count.warning {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+/* ── Composer action buttons ── */
+.composer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  flex-shrink: 0;
+}
+
+/* Shared style for icon-only buttons */
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast),
+              border-color var(--transition-fast),
+              background-color var(--transition-fast);
+}
+
+.btn-icon:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.btn-icon:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Send button — accent colored */
+.btn-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              opacity var(--transition-fast);
+}
+
+.btn-send:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.btn-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-send:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── 8. Footer ───────────────────────────────────────────── */
+.site-footer {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 0.4rem var(--gap-md) 0.5rem;
+  line-height: 1.4;
+}
+
+.site-footer a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site-footer a:hover { color: var(--color-accent); }
+
+/* ── 9. Scrollbar styling (optional, non-essential) ─────── */
+.chat-main::-webkit-scrollbar { width: 6px; }
+.chat-main::-webkit-scrollbar-track { background: transparent; }
+.chat-main::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+/* ── 10. Utility ─────────────────────────────────────────── */
+/* When the input is pending, disable pointer events on suggestions */
+body.is-loading .suggestion-btn { pointer-events: none; opacity: 0.6; }

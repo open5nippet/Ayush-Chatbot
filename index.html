@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    viewport-fit=cover lets the page use the full screen on iPhones with notches
+    and home-bar areas. We then add env(safe-area-inset-*) padding in CSS.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- ── SEO & Social ─────────────────────────────────────────────────── -->
+  <title>Ask me about Ayush — Portfolio Assistant</title>
+  <meta name="description" content="A conversational assistant that answers questions about [[YOUR_NAME]]'s skills, projects, and experience. Built with n8n and a free AI model." />
+  <meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Ask me about Ayush" />
+  <meta property="og:description" content="Ask anything about [[YOUR_NAME]]'s work, skills, and projects." />
+  <meta property="og:image" content="/assets/og-image.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ask me about Ayush" />
+  <meta name="twitter:description" content="Ask anything about [[YOUR_NAME]]'s work, skills, and projects." />
+  <meta name="twitter:image" content="/assets/og-image.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+
+  <!-- ── Fonts ─────────────────────────────────────────────────────────── -->
+  <!--
+    preconnect tells the browser to open a connection to fonts.googleapis.com
+    early, so fonts load faster. font-display: swap (set in CSS) prevents
+    invisible text while fonts are downloading.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <!-- ── Header ───────────────────────────────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <div class="header-identity">
+        <span class="header-name">[[YOUR_NAME]]</span>
+        <span class="header-tagline">[[ROLE_TAGLINE]]</span>
+      </div>
+      <nav class="header-links" aria-label="Profile links">
+        <a href="[[GITHUB_URL]]"  target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub</a>
+        <a href="[[LINKEDIN_URL]]" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">LinkedIn</a>
+        <a href="mailto:[[EMAIL]]" aria-label="Send an email">Email</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Main: chat column ────────────────────────────────────────────── -->
+  <main class="chat-main" id="chat-main">
+    <!--
+      role="log" + aria-live="polite" tells screen readers to announce
+      new messages as they appear without interrupting what the user is doing.
+      aria-label gives the region a name for assistive technology.
+    -->
+    <div
+      class="message-list"
+      id="message-list"
+      role="log"
+      aria-live="polite"
+      aria-label="Conversation"
+    ></div>
+
+    <!-- Welcome state — hidden once first message is sent -->
+    <div class="welcome-panel" id="welcome-panel" aria-hidden="false">
+      <h1 class="welcome-heading">Ask me about Ayush</h1>
+      <p class="welcome-body">
+        This assistant can answer questions about [[YOUR_NAME]]'s technical
+        skills, past projects, work experience, education, and how this chatbot
+        was built. It draws only from information [[YOUR_NAME]] provided, so
+        answers about anything else will be limited.
+      </p>
+      <ul class="suggestions" role="list" aria-label="Suggested questions">
+        <li>
+          <button class="suggestion-btn" type="button">
+            What projects has Ayush worked on?
+          </button>
+        </li>
+        <li>
+          <button class="suggestion-btn" type="button">
+            What are his technical skills?
+          </button>
+        </li>
+        <li>
+          <button class="suggestion-btn" type="button">
+            What is his work or internship experience?
+          </button>
+        </li>
+        <li>
+          <button class="suggestion-btn" type="button">
+            How was this chatbot built?
+          </button>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- ── Composer (fixed to bottom) ─────────────────────────────────── -->
+  <div class="composer-wrapper" role="region" aria-label="Message composer">
+    <!-- Offline notice -->
+    <div class="offline-banner" id="offline-banner" hidden aria-live="assertive">
+      You appear to be offline. Messages cannot be sent right now.
+    </div>
+
+    <div class="composer-inner">
+      <form class="composer-form" id="composer-form" autocomplete="off">
+        <label for="message-input" class="sr-only">Your message</label>
+        <div class="textarea-wrapper">
+          <textarea
+            id="message-input"
+            class="message-input"
+            name="message"
+            rows="1"
+            maxlength="500"
+            placeholder="Ask something about Ayush…"
+            aria-label="Your message"
+            aria-describedby="char-count"
+          ></textarea>
+          <!-- Character counter — only shown near the limit -->
+          <span class="char-count" id="char-count" aria-live="polite" aria-atomic="true"></span>
+        </div>
+
+        <div class="composer-actions">
+          <!-- New conversation button -->
+          <button
+            type="button"
+            class="btn-icon btn-new-chat"
+            id="btn-new-chat"
+            aria-label="Start a new conversation"
+            title="New conversation"
+          >
+            <!-- SVG: new-chat / refresh icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+
+          <!-- Send button -->
+          <button
+            type="submit"
+            class="btn-send"
+            id="btn-send"
+            aria-label="Send message"
+            disabled
+          >
+            <!-- SVG: send / arrow icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            <span class="sr-only">Send</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer disclaimer -->
+    <footer class="site-footer" role="contentinfo">
+      Answers are generated by an AI model from information I provided and may
+      be imperfect. For anything important,
+      <a href="mailto:[[EMAIL]]">contact me directly</a>.
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
