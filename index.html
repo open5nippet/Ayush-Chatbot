@@ -9,21 +9,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- ── SEO & Social ─────────────────────────────────────────────────── -->
-  <title>Ask me about Ayush — Portfolio Assistant</title>
-  <meta name="description" content="A conversational assistant that answers questions about [[YOUR_NAME]]'s skills, projects, and experience. Built with n8n and a free AI model." />
+  <title>Ask me about Ayush Kumar — Portfolio Assistant</title>
+  <meta name="description" content="A conversational assistant for learning about Ayush Kumar and this portfolio chatbot." />
   <meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Ask me about Ayush" />
-  <meta property="og:description" content="Ask anything about [[YOUR_NAME]]'s work, skills, and projects." />
+  <meta property="og:title" content="Ask me about Ayush Kumar" />
+  <meta property="og:description" content="Learn about Ayush Kumar and this portfolio chatbot." />
+  <!-- TODO: replace with the full https URL after deploying to Vercel -->
   <meta property="og:image" content="/assets/og-image.png" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Ask me about Ayush" />
-  <meta name="twitter:description" content="Ask anything about [[YOUR_NAME]]'s work, skills, and projects." />
+  <meta name="twitter:title" content="Ask me about Ayush Kumar" />
+  <meta name="twitter:description" content="Learn about Ayush Kumar and this portfolio chatbot." />
+  <!-- TODO: replace with the full https URL after deploying to Vercel -->
   <meta name="twitter:image" content="/assets/og-image.png" />
 
   <!-- Favicon -->
@@ -50,13 +52,13 @@
   <header class="site-header" role="banner">
     <div class="header-inner">
       <div class="header-identity">
-        <span class="header-name">[[YOUR_NAME]]</span>
-        <span class="header-tagline">[[ROLE_TAGLINE]]</span>
+        <span class="header-name">Ayush Kumar</span>
+        <span class="header-tagline">Computer Science student at K.R. Mangalam University</span>
       </div>
       <nav class="header-links" aria-label="Profile links">
-        <a href="[[GITHUB_URL]]"  target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub</a>
-        <a href="[[LINKEDIN_URL]]" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">LinkedIn</a>
-        <a href="mailto:[[EMAIL]]" aria-label="Send an email">Email</a>
+        <a href="https://github.com/open5nippet"  target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">GitHub</a>
+        <a href="https://www.linkedin.com/in/ayush-kumar-tech" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">LinkedIn</a>
+        <a href="mailto:medium.ayush.16@gmail.com" aria-label="Send an email">Email</a>
       </nav>
     </div>
   </header>
@@ -78,32 +80,30 @@
 
     <!-- Welcome state — hidden once first message is sent -->
     <div class="welcome-panel" id="welcome-panel" aria-hidden="false">
-      <h1 class="welcome-heading">Ask me about Ayush</h1>
+      <h1 class="welcome-heading">Ask me about Ayush Kumar</h1>
       <p class="welcome-body">
-        This assistant can answer questions about [[YOUR_NAME]]'s technical
-        skills, past projects, work experience, education, and how this chatbot
-        was built. It draws only from information [[YOUR_NAME]] provided, so
-        answers about anything else will be limited.
+        This assistant can answer questions about this portfolio chatbot and
+        how it works. Its answers are limited to the information available to it.
       </p>
       <ul class="suggestions" role="list" aria-label="Suggested questions">
         <li>
           <button class="suggestion-btn" type="button">
-            What projects has Ayush worked on?
+            How does this chatbot work?
           </button>
         </li>
         <li>
           <button class="suggestion-btn" type="button">
-            What are his technical skills?
+            What happens when I send a message?
           </button>
         </li>
         <li>
           <button class="suggestion-btn" type="button">
-            What is his work or internship experience?
+            Which services does this chatbot use?
           </button>
         </li>
         <li>
           <button class="suggestion-btn" type="button">
-            How was this chatbot built?
+            What are this chatbot's limitations?
           </button>
         </li>
       </ul>
@@ -127,7 +127,7 @@
             name="message"
             rows="1"
             maxlength="500"
-            placeholder="Ask something about Ayush…"
+            placeholder="Ask something about Ayush Kumar…"
             aria-label="Your message"
             aria-describedby="char-count"
           ></textarea>
@@ -178,7 +178,7 @@
     <footer class="site-footer" role="contentinfo">
       Answers are generated by an AI model from information I provided and may
       be imperfect. For anything important,
-      <a href="mailto:[[EMAIL]]">contact me directly</a>.
+      <a href="mailto:medium.ayush.16@gmail.com">contact me directly</a>.
     </footer>
   </div>
 

@@ -219,7 +219,7 @@ function addMessage(role, content, options = {}) {
   // Screen-reader label
   const label = document.createElement('span');
   label.className = 'message-label';
-  label.textContent = role === 'user' ? 'You' : role === 'error' ? 'Error' : 'Ayush';
+  label.textContent = role === 'user' ? 'You' : role === 'error' ? 'Error' : 'Ayush Kumar';
   row.appendChild(label);
 
   const bubble = document.createElement('div');
@@ -229,7 +229,7 @@ function addMessage(role, content, options = {}) {
     // Animated dots — role="status" ensures screen readers announce this
     // even though the element is inside a polite aria-live region.
     bubble.setAttribute('role', 'status');
-    bubble.setAttribute('aria-label', 'Ayush is typing');
+    bubble.setAttribute('aria-label', 'Ayush Kumar is typing');
     const indicator = document.createElement('div');
     indicator.className = 'typing-indicator';
     indicator.setAttribute('aria-hidden', 'true');
