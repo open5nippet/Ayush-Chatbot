@@ -2,6 +2,8 @@
 
 This project is a small portfolio chatbot with a plain HTML, CSS, and JavaScript interface. Visitors can send a question through the browser and receive a response from an AI agent managed in n8n.
 
+Built by Ayush Kumar as a portfolio project to learn n8n, Docker, and serverless deployment.
+
 TODO: Add a screenshot or demo GIF.
 
 ## Architecture
@@ -21,27 +23,29 @@ The browser sends each message to the same-origin `/api/chat` endpoint. The Verc
 
 ## Run locally
 
-1. Install Node.js 18 or later and the Vercel CLI.
+1. Install a current LTS version of Node.js and the Vercel CLI.
 
    ```powershell
    npm install -g vercel
    ```
 
-2. Create a local environment file from the example.
+2. Copy `.env.example` to `.env` and add the required values.
 
    ```powershell
    Copy-Item .env.example .env
    ```
 
-3. Add the required values to your local `.env` file.
+   ```sh
+   cp .env.example .env
+   ```
 
-4. Start the development server.
+3. Start the development server.
 
    ```powershell
    vercel dev
    ```
 
-5. Open the local address shown by Vercel, usually `http://localhost:3000`.
+4. Open the local address shown by Vercel, usually `http://localhost:3000`. If `vercel dev` misbehaves, deploy to Vercel and test there.
 
 ## Environment variables
 
