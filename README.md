@@ -8,8 +8,15 @@ This project is a small portfolio chatbot with a plain HTML, CSS, and JavaScript
 
 Built by Ayush Kumar as a portfolio project to learn n8n, Docker, and serverless deployment.
 
-<!-- TODO: save a screenshot as assets/screenshot.png before publishing -->
-![Screenshot of the chatbot](assets/screenshot.png)
+## Screenshots
+
+### Welcome screen
+
+![Welcome screen of the chatbot](assets/welcome-screen.png)
+
+### Conversation example
+
+![Chatbot conversation example](assets/chat-conversation.png)
 
 ## Architecture
 
