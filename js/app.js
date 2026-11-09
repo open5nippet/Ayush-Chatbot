@@ -458,6 +458,12 @@ async function callAPI(message) {
     throw err;
   }
 
+  if (typeof data.reply !== 'string' || data.reply.trim() === '') {
+    const err = new Error('The assistant returned an empty response.');
+    err.code = 'offline';
+    throw err;
+  }
+
   return data.reply;
 }
 

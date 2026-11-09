@@ -12,11 +12,8 @@
 //   N8N_WEBHOOK_URL   — the full URL of your n8n production webhook
 //   N8N_SHARED_SECRET — the secret string set in n8n's webhook node
 //
-// NODE VERSION NOTE: This file uses native fetch, which is available
-// in Node.js 18 and later. Node 18 reached End-of-Life in April 2025.
-// In Vercel Project Settings → General → Node.js Version, choose a
-// currently supported version (20.x or 22.x). Check the current list at:
-// https://vercel.com/docs/functions/runtimes/node-js#node.js-version
+// Uses the built-in fetch API, available in all currently supported Node.js versions.
+// Check Project Settings > Node.js Version in Vercel.
 // ============================================================
 
 // ─────────────────────────────────────────────────────────────
@@ -37,6 +34,13 @@ const ipRequests             = new Map();  // Map<ip, { count, resetAt }>
 
 function checkRateLimit(ip) {
   const now  = Date.now();
+
+  if (ipRequests.size > 500) {
+    for (const [storedIp, storedEntry] of ipRequests.entries()) {
+      if (now > storedEntry.resetAt) ipRequests.delete(storedIp);
+    }
+  }
+
   const entry = ipRequests.get(ip);
 
   if (!entry || now > entry.resetAt) {
@@ -52,16 +56,6 @@ function checkRateLimit(ip) {
   entry.count += 1;
   return { allowed: true };
 }
-
-// Periodically clean up old entries so the Map doesn't grow forever.
-// In a serverless environment, setInterval may not fire reliably —
-// this is fine; cleanup will happen on each cold start.
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of ipRequests.entries()) {
-    if (now > entry.resetAt) ipRequests.delete(ip);
-  }
-}, RATE_LIMIT_WINDOW_MS);
 
 // ─────────────────────────────────────────────────────────────
 // SECTION 2 — Input Validation Helpers
@@ -182,6 +176,7 @@ export default async function handler(req, res) {
         // The shared secret is NEVER sent to the browser.
         // It only travels from this server function to n8n.
         'x-api-key': sharedSecret,
+        'ngrok-skip-browser-warning': '1',
       },
       body: JSON.stringify({
         sessionId: body.sessionId,
@@ -251,7 +246,7 @@ export default async function handler(req, res) {
   }
 
   // Validate that n8n gave us the expected shape: { reply: "..." }
-  if (typeof upstreamData.reply !== 'string') {
+  if (typeof upstreamData.reply !== 'string' || upstreamData.reply.trim() === '') {
     console.error('[chat] Upstream response missing "reply" field.');
     return json(res, 502, {
       error:   'offline',

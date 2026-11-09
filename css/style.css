@@ -69,6 +69,10 @@
   padding: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   font-size: 16px;
   /* 100dvh: dynamic viewport height — accounts for mobile browser chrome.
