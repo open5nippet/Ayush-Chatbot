@@ -1,15 +1,20 @@
 # Portfolio Chatbot
 
+Live demo: https://ayushchatbot.vercel.app
+
+The backend runs on my own machine through a tunnel, so the chat may show an offline message when my computer is off.
+
 This project is a small portfolio chatbot with a plain HTML, CSS, and JavaScript interface. Visitors can send a question through the browser and receive a response from an AI agent managed in n8n.
 
 Built by Ayush Kumar as a portfolio project to learn n8n, Docker, and serverless deployment.
 
-TODO: Add a screenshot or demo GIF.
+<!-- TODO: save a screenshot as assets/screenshot.png before publishing -->
+![Screenshot of the chatbot](assets/screenshot.png)
 
 ## Architecture
 
 ```
-Browser -> Vercel -> serverless proxy -> n8n webhook -> AI agent -> Gemini
+Browser -> Vercel -> serverless proxy -> ngrok tunnel -> n8n webhook (Docker) -> AI agent -> Gemini
 ```
 
 The browser sends each message to the same-origin `/api/chat` endpoint. The Vercel serverless function validates the request and forwards it to the n8n webhook. The webhook invokes the AI agent and returns its reply through the proxy to the browser. The webhook URL and shared secret remain server-side environment variables.
@@ -19,6 +24,8 @@ The browser sends each message to the same-origin `/api/chat` endpoint. The Verc
 - HTML, CSS, and vanilla JavaScript
 - Vercel serverless functions
 - n8n
+- Docker
+- ngrok (tunnel)
 - Gemini
 
 ## Run locally
